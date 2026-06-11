@@ -1,6 +1,10 @@
 const M2Component = {
         emits: ['score-change'],
-        setup(_, { emit }) {
+        props: {
+            selectedData: { type: Object, default: null }
+        },
+        setup(props, { emit }) {
+            const { watch: vWatch } = Vue;
             const m2ConfigGroup1 = [
                 { id: 'child_pop', label: '0–18 yoshdagi bolalar soni', min: 1000, max: 4000, w: 0.10, sign: 1 },
                 { id: 'active_pop', label: 'Faol yoshdagilar (18–60) soni', min: 3000, max: 8000, w: 0.12, sign: 1 },
@@ -24,12 +28,28 @@ const M2Component = {
                 { id: 'eco_events', label: 'Ekologik tadbirlarda ishtirok (%)', min: 10, max: 100, w: 0.30, sign: 1 }
             ];
             const m2Raw = ref({
-                total_pop: 12276, child_pop: 2428, active_pop: 5993, old_pop: 1797,
-                chronic_sick: 694, prev_check: 4513, sport_grounds: 13, sport_grounds_1000: 1.059,
-                sport_clubs: 17, kids_in_sport: 910, doc_ratio: 714, med_stations: 1,
-                med_satisfaction: 49.19, healthy_events: 62, bad_habits: 27.01,
-                healthy_diet: 70.86, eco_events: 71.72
+                total_pop: '', child_pop: '', active_pop: '', old_pop: '',
+                chronic_sick: '', prev_check: '', sport_grounds: '', sport_grounds_1000: '',
+                sport_clubs: '', kids_in_sport: '', doc_ratio: '', med_stations: '',
+                med_satisfaction: '', healthy_events: '', bad_habits: '',
+                healthy_diet: '', eco_events: ''
             });
+
+            // Tashqaridan yuklangan ma'lumot o'zgarganda inputlarni to'ldirish
+            vWatch(() => props.selectedData, (newData) => {
+                if (newData && newData.m2) {
+                    m2Raw.value = { ...newData.m2 };
+                } else if (!newData) {
+                    m2Raw.value = {
+                        total_pop: '', child_pop: '', active_pop: '', old_pop: '',
+                        chronic_sick: '', prev_check: '', sport_grounds: '', sport_grounds_1000: '',
+                        sport_clubs: '', kids_in_sport: '', doc_ratio: '', med_stations: '',
+                        med_satisfaction: '', healthy_events: '', bad_habits: '',
+                        healthy_diet: '', eco_events: ''
+                    };
+                }
+            }, { deep: true });
+
             const loadM2Sample = () => {
                 m2Raw.value = {
                     total_pop: 12276, child_pop: 2428, active_pop: 5993, old_pop: 1797,
@@ -75,9 +95,9 @@ const M2Component = {
                             <span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full">M2 Modeli</span>
                             Sog‘lomlashtiruvchi real ko‘rsatkichlar majmuasi (Parametrik Koridor)
                         </h2>
-                        <button @click="loadM2Sample" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded transition font-medium">
-                            1-ID mahalla real ma'lumotlarini yuklash
-                        </button>
+<!--                        <button @click="loadM2Sample" class="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded transition font-medium">-->
+<!--                            1-ID mahalla real ma'lumotlarini yuklash-->
+<!--                        </button>-->
                     </div>
 
                     <div class="space-y-6">
@@ -140,7 +160,7 @@ const M2Component = {
                 <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 space-y-4">
                     <h3 class="text-base font-bold text-gray-700 border-b pb-2 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                        M2 Modeli Ichki Algoritmik Hisob-Kitobi ($A^1, A^2, A^3$)
+                        M2 Modeli Ichki Algoritmik Hisob-Kitobi <span class="font-mono font-bold text-teal-700">(A<sup>1</sup>, A<sup>2</sup>, A<sup>3</sup>)</span>
                     </h3>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">

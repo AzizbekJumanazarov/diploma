@@ -2,6 +2,7 @@
 
 createApp({
         components: {
+            DataSelectorComponent,
             M1Component,
             M2Component,
             M3Component,
@@ -13,6 +14,20 @@ createApp({
             const m2FinalScore = ref(0);
             const m3FinalScore = ref(0);
             const integralScore = ref(0);
+
+            // ID Selector
+            const selectedId = ref(null);
+            const selectedData = ref(null);
+
+            const handleIdSelected = (id) => {
+                selectedId.value = id;
+                if (id === null) {
+                    selectedData.value = null;
+                } else {
+                    const found = MAHALLALAR_DATA.find(m => m.id === id);
+                    selectedData.value = found || null;
+                }
+            };
 
             const currentDisplayScore = computed(() => {
                 if (activeTab.value === 'M1') return m1FinalScore.value;
@@ -42,7 +57,11 @@ createApp({
                 m3FinalScore,
                 integralScore,
                 currentDisplayScore,
-                softmaxProb
+                softmaxProb,
+                selectedId,
+                selectedData,
+                handleIdSelected
             };
         }
     }).mount('#app');
+

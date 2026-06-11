@@ -6,8 +6,174 @@
     <title>Mahalla Raislari Faoliyatini Baholash - Kompleks Platforma</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+        /* ===== DATA SELECTOR COMPONENT STYLES ===== */
+        .data-selector-wrapper {
+            position: sticky;
+            top: 57px;
+            z-index: 40;
+            background: linear-gradient(135deg, #0f4c35 0%, #065f46 50%, #0e7490 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+        }
+        .data-selector-inner {
+            max-width: 80rem;
+            margin: 0 auto;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .ds-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+        .ds-dropdown-wrap { display: flex; align-items: center; position: relative; }
+        .ds-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            min-width: 200px;
+            backdrop-filter: blur(4px);
+        }
+        .ds-trigger:hover, .ds-trigger--active {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+        .ds-trigger--selected {
+            background: rgba(52, 211, 153, 0.25);
+            border-color: rgba(52, 211, 153, 0.6);
+        }
+        .ds-placeholder { color: rgba(255,255,255,0.5); font-weight: 400; font-style: italic; }
+        .ds-chevron { margin-left: auto; opacity: 0.8; transition: transform 0.2s; flex-shrink: 0; }
+        .ds-chevron--up { transform: rotate(180deg); }
+        .ds-id-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(52,211,153,0.35);
+            color: #a7f3d0;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.03em;
+            border: 1px solid rgba(52,211,153,0.4);
+        }
+        .ds-id-badge--sm { font-size: 9px; padding: 1px 5px; min-width: 22px; }
+
+        /* Dropdown Menu */
+        .ds-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            min-width: 240px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.08);
+            overflow: hidden;
+            z-index: 9999;
+            animation: ds-slide-in 0.15s ease;
+        }
+        .ds-menu-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+        .ds-menu-scrollable {
+            max-height: 260px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #d1fae5 transparent;
+        }
+        .ds-menu-scrollable::-webkit-scrollbar { width: 4px; }
+        .ds-menu-scrollable::-webkit-scrollbar-track { background: transparent; }
+        .ds-menu-scrollable::-webkit-scrollbar-thumb { background: #6ee7b7; border-radius: 4px; }
+        .ds-menu-scrollable::-webkit-scrollbar-thumb:hover { background: #059669; }
+        @keyframes ds-slide-in {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .ds-menu-header {
+            padding: 8px 12px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .ds-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.12s;
+            text-align: left;
+        }
+        .ds-menu-item:hover { background: #f0fdf4; }
+        .ds-menu-item--active { background: #ecfdf5; color: #065f46; font-weight: 700; }
+        .ds-check { margin-left: auto; color: #059669; flex-shrink: 0; }
+        .ds-menu-divider { height: 1px; background: #f3f4f6; margin: 2px 0; }
+        .ds-empty { padding: 10px 12px; font-size: 12px; color: #9ca3af; text-align: center; }
+        .ds-clear-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #9ca3af;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.12s;
+        }
+        .ds-clear-btn:hover { color: #ef4444; background: #fef2f2; }
+        .ds-loaded-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: #a7f3d0;
+            background: rgba(52, 211, 153, 0.2);
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.02em;
+        }
+        .ds-hint {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            font-style: italic;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
@@ -15,21 +181,22 @@
 <div id="app" class="flex-grow flex flex-col">
     <header class="bg-emerald-700 text-white shadow-md p-5 text-center">
         <h1 class="text-2xl font-bold tracking-wide">MAHALLALAR FAOLIYATINI BAHOLASH VA PROGNOZLASH TIZIMI</h1>
-        <p class="text-sm text-emerald-100 mt-1">Ilmiy-tadqiqot ishi va to‘g‘rilangan parametrik modellar kompleks vizualizatsiyasi</p>
+        <p class="text-sm text-emerald-100 mt-1">Demografik ansambl o'qitish, sog'lomlashtirish parametrlari va noravshan KPI mezonlari asosidagi kompleks tahliliy dasturiy vosita</p>
     </header>
 
+    <!-- Tab navigatsiyasi (sticky) -->
     <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <nav class="flex space-x-8" aria-label="Tabs">
                 <button @click="activeTab = 'M1'"
                         :class="activeTab === 'M1' ? 'border-emerald-500 text-emerald-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                         class="py-4 px-1 border-b-2 font-medium text-sm transition-all cursor-pointer">
-                    M1: Demografik & Stacking
+                    M1: Demografik &amp; Stacking
                 </button>
                 <button @click="activeTab = 'M2'"
                         :class="activeTab === 'M2' ? 'border-emerald-500 text-emerald-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                         class="py-4 px-1 border-b-2 font-medium text-sm transition-all cursor-pointer">
-                    M2: Sog‘lomlashtirish & Parametrik
+                    M2: Sog'lomlashtirish &amp; Parametrik
                 </button>
                 <button @click="activeTab = 'M3'"
                         :class="activeTab === 'M3' ? 'border-emerald-500 text-emerald-600 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
@@ -45,20 +212,26 @@
         </div>
     </div>
 
+    <!-- ID Selector — tab nav ostida, sticky joylashadi -->
+    <data-selector-component @id-selected="handleIdSelected"></data-selector-component>
+
     <main class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow w-full">
 
         <m1-component
                 v-show="activeTab === 'M1'"
+                :selected-data="selectedData"
                 @score-change="m1FinalScore = $event">
         </m1-component>
 
         <m2-component
                 v-show="activeTab === 'M2'"
+                :selected-data="selectedData"
                 @score-change="m2FinalScore = $event">
         </m2-component>
 
         <m3-component
                 v-show="activeTab === 'M3'"
+                :selected-data="selectedData"
                 @score-change="m3FinalScore = $event">
         </m3-component>
 
@@ -89,7 +262,8 @@
                     <p class="text-xs font-semibold text-emerald-300 uppercase tracking-wider">Klasslar bo'yicha ehtimolliklar (Softmax):</p>
                     <div>
                         <div class="flex justify-between text-xs mb-1">
-                            <span>Yuqori samarador (> 75%)</span>
+<!--                            <span>Yuqori samarador (&gt; 75%)</span>-->
+                            <span>Yuqori samarador</span>
                             <span class="font-mono font-bold">{{ (softmaxProb.high * 100).toFixed(1) }}%</span>
                         </div>
                         <div class="w-full bg-emerald-950 rounded-full h-1.5">
@@ -98,7 +272,8 @@
                     </div>
                     <div>
                         <div class="flex justify-between text-xs mb-1">
-                            <span>O'rta samarador (60% - 75%)</span>
+                            <span>O'rta samarador</span>
+<!--                            <span>O'rta samarador (60% - 75%)</span>-->
                             <span class="font-mono font-bold">{{ (softmaxProb.medium * 100).toFixed(1) }}%</span>
                         </div>
                         <div class="w-full bg-emerald-950 rounded-full h-1.5">
@@ -107,7 +282,8 @@
                     </div>
                     <div>
                         <div class="flex justify-between text-xs mb-1">
-                            <span>Past samarador (< 60%)</span>
+                            <span>Past samarador</span>
+<!--                            <span>Past samarador (&lt; 60%)</span>-->
                             <span class="font-mono font-bold">{{ (softmaxProb.low * 100).toFixed(1) }}%</span>
                         </div>
                         <div class="w-full bg-emerald-950 rounded-full h-1.5">
@@ -123,8 +299,11 @@
                     <p class="pt-1 font-mono text-[11px]">
                         <span v-if="activeTab=='M1'">Model Turi: <span class="text-emerald-600 font-bold">Stacking Ansambl (R²=0.8916)</span></span>
                         <span v-if="activeTab=='M2'">Model Turi: <span class="text-teal-600 font-bold">Ierarxik Parametrik (Tuzatilgan Min-Max)</span></span>
-                        <span v-if="activeTab=='M3'">Model Turi: <span class="text-indigo-600 font-bold">Dinamik Savollar Modeli ($x_1 \dots x_9$)</span></span>
+                        <span v-if="activeTab=='M3'">Model Turi: <span class="text-indigo-600 font-bold">Dinamik Savollar Modeli (x<sub>1</sub> ... x<sub>9</sub>)</span></span>
                         <span v-if="activeTab=='INTEGRAL'">Model Turi: <span class="text-purple-600 font-bold">Kompleks Integral Kompozit (M1+M2+M3)</span></span>
+                    </p>
+                    <p class="pt-1 font-mono text-[11px]" v-if="selectedId !== null">
+                        Yuklangan ma'lumot: <span class="text-emerald-600 font-bold">ID {{ selectedId }}</span>
                     </p>
                 </div>
             </div>
@@ -132,6 +311,8 @@
     </main>
 </div>
 
+<script src="data/mahallalar.js"></script>
+<script src="components/DataSelectorComponent.js"></script>
 <script src="components/M1Component.js"></script>
 <script src="components/M2Component.js"></script>
 <script src="components/M3Component.js"></script>

@@ -1,6 +1,10 @@
 const M1Component = {
         emits: ['score-change'],
-        setup(_, { emit }) {
+        props: {
+            selectedData: { type: Object, default: null }
+        },
+        setup(props, { emit }) {
+            const { watch: vWatch } = Vue;
             const m1Config = [
                 { id: 'x1', label: 'Korxona va tashkilotlarda ishlovchilar soni' },
                 { id: 'x2', label: 'Tadbirkorlik bilan band bo‘lganlar' },
@@ -12,7 +16,17 @@ const M1Component = {
                 { id: 'x8', label: 'Xorijga ish izlab ketganlar soni' },
                 { id: 'x9', label: 'Doimiy ish bilan band bo‘lganlar soni' }
             ];
-            const m1Raw = ref({ x1: 2371, x2: 649, x3: 194, x4: 726, x5: 182, x6: 486, x7: 149, x8: 312, x9: 189 });
+            const m1Raw = ref({ x1: '', x2: '', x3: '', x4: '', x5: '', x6: '', x7: '', x8: '', x9: '' });
+
+            // Tashqaridan yuklangan ma'lumot o'zgarganda inputlarni to'ldirish
+            vWatch(() => props.selectedData, (newData) => {
+                if (newData && newData.m1) {
+                    m1Raw.value = { ...newData.m1 };
+                } else if (!newData) {
+                    m1Raw.value = { x1: '', x2: '', x3: '', x4: '', x5: '', x6: '', x7: '', x8: '', x9: '' };
+                }
+            }, { deep: true });
+
             const loadM1Sample = () => {
                 m1Raw.value = { x1: 2371, x2: 649, x3: 194, x4: 726, x5: 182, x6: 486, x7: 149, x8: 312, x9: 189 };
             };
@@ -57,11 +71,11 @@ const M1Component = {
                     <div class="flex justify-between items-center mb-4 border-b pb-2">
                         <h2 class="text-lg font-bold text-gray-700 flex items-center gap-2">
                             <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full">Kiritish</span>
-                            1-Qadam: Demografik real ko'rsatkichlar (Massiv $D_i$)
+                            1-Qadam: Demografik real ko'rsatkichlar
                         </h2>
-                        <button @click="loadM1Sample" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded transition font-medium">
-                            1-ID mahalla ma'lumotlarini yuklash
-                        </button>
+<!--                        <button @click="loadM1Sample" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded transition font-medium">-->
+<!--                            1-ID mahalla ma'lumotlarini yuklash-->
+<!--                        </button>-->
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -82,7 +96,7 @@ const M1Component = {
 
                     <div class="space-y-4 text-sm">
                         <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="font-semibold text-gray-700">2-Qadam: Ma'lumotlarni saralash va normallashtirish ($d_{ij} \\to [0, 1]$)</p>
+                            <p class="font-semibold text-gray-700">2-Qadam: Ma'lumotlarni saralash va normallashtirish <span>d<sub>ij</sub> &rarr; [0, 1]</span></p>
                             <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 text-center text-xs mt-2">
                                 <div v-for="(val, key) in m1Normalized" :key="key" class="bg-white p-1.5 rounded border">
                                     <span class="block font-bold text-gray-400">{{ key }}</span>
@@ -92,7 +106,7 @@ const M1Component = {
                         </div>
 
                         <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="font-semibold text-gray-700">3-Qadam: 6 ta bazaviy model orqali prognozlash ($h_1(D), ..., h_6(D)$)</p>
+                            <p class="font-semibold text-gray-700">3-Qadam: 6 ta bazaviy model orqali prognozlash (h<sub>1</sub>(D), ..., h<sub>6</sub>(D))</p>
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
                                 <div v-for="m in baseModelList" :key="m.name" class="bg-white p-2 rounded border text-center">
                                     <span class="text-[11px] text-gray-500 block leading-tight h-8 flex items-center justify-center">{{ m.name }}</span>
@@ -102,7 +116,7 @@ const M1Component = {
                         </div>
 
                         <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="font-semibold text-gray-700">4-5-6 Qadamlar: Stacking Vektor ($Z_i$) va Meta-Model Optimallashuvi</p>
+                            <p class="font-semibold text-gray-700">4-5-6 Qadamlar: Stacking Vektor <span class="font-mono font-bold text-gray-700">(Z<sub>i</sub>)</span> va Meta-Model Optimallashuvi</p>
                             <div class="mt-2 p-2 bg-slate-900 text-slate-100 rounded font-mono text-xs overflow-x-auto">
                                 Z<sub>i</sub> = [
                                 <span v-for="(m, idx) in baseModelList" :key="idx">
