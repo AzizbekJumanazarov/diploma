@@ -114,12 +114,19 @@ const IntegralComponent = {
                     </div>
                 </div>
 
-                <div class="bg-slate-900 text-slate-100 p-5 rounded-xl relative overflow-hidden border border-slate-700 shadow-inner">
-                    <div class="absolute top-0 right-0 bg-indigo-500/20 text-indigo-300 text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-bl font-mono">
+                <div class="bg-gradient-to-r from-slate-50 to-indigo-50/30 p-5 rounded-xl relative overflow-hidden border border-indigo-100/80 shadow-sm transition-all duration-300 hover:shadow-md">
+                    <div class="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-purple-600"></div>
+                    
+                    <div class="absolute top-0 right-0 bg-indigo-100 text-indigo-700 text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-bl font-bold">
                         {{ selectedRole === 'raisi' ? 'Boshqaruv Ob\\'ekti: Rais' : 'Boshqaruv Ob\\'ekti: Vakil' }}
                     </div>
-                    <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Generatsiya qilingan qaror loyihasi:</h4>
-                    <p class="text-sm font-medium leading-relaxed font-sans text-slate-200">
+                    
+                    <h4 class="text-[11px] font-extrabold text-indigo-600 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                        Generatsiya qilingan qaror loyihasi:
+                    </h4>
+                    
+                    <p class="text-sm font-semibold leading-relaxed font-sans text-slate-700 pl-2">
                         {{ generatedRecommendation }}
                     </p>
                 </div>
@@ -156,26 +163,26 @@ const IntegralComponent = {
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div class="border-b pb-2 mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                        Kompleks Baholash va Qaror Qabul Qilishni Qo'llab-Quvvatlash Sxemasi
-                    </h3>
-                </div>
+<!--            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">-->
+<!--                <div class="border-b pb-2 mb-4">-->
+<!--                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">-->
+<!--                        Kompleks Baholash va Qaror Qabul Qilishni Qo'llab-Quvvatlash Sxemasi-->
+<!--                    </h3>-->
+<!--                </div>-->
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 bg-gray-50 p-4 rounded-lg border">
-                    <div>
-                        <label class="text-xs font-bold text-gray-600 block mb-1"><p>&delta;<sub>1</sub> - Integrallashgan baho I<sub>i</sub> uchun chegaraviy mezon:</p></label>
-                        <input type="number" step="0.05" min="0" max="1" v-model.number="delta1" class="w-full bg-white border border-gray-300 rounded p-1.5 font-mono text-sm">
-                        <span class="text-[11px] text-gray-400">Joriy I<sub>i</sub>: {{ (integralScore/100).toFixed(4) }}</span>
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-600 block mb-1"><p>&delta;<sub>2</sub> - Minimal ko'rsatkich m<sub>i</sub> uchun chegaraviy mezon:</p></label>
-                        <input type="number" step="0.05" min="0" max="1" v-model.number="delta2" class="w-full bg-white border border-gray-300 rounded p-1.5 font-mono text-sm">
-                        <span class="text-[11px] text-gray-400">Joriy m<sub>i</sub>(min): {{ Math.min(m1FinalScore/100, m2FinalScore/100, m3FinalScore/100).toFixed(4) }}</span>
-                    </div>
-                </div>
-            </div>
+<!--                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 bg-gray-50 p-4 rounded-lg border">-->
+<!--                    <div>-->
+<!--                        <label class="text-xs font-bold text-gray-600 block mb-1"><p>&delta;<sub>1</sub> - Integrallashgan baho I<sub>i</sub> uchun chegaraviy mezon:</p></label>-->
+<!--                        <input type="number" step="0.05" min="0" max="1" v-model.number="delta1" class="w-full bg-white border border-gray-300 rounded p-1.5 font-mono text-sm">-->
+<!--                        <span class="text-[11px] text-gray-400">Joriy I<sub>i</sub>: {{ (integralScore/100).toFixed(4) }}</span>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <label class="text-xs font-bold text-gray-600 block mb-1"><p>&delta;<sub>2</sub> - Minimal ko'rsatkich m<sub>i</sub> uchun chegaraviy mezon:</p></label>-->
+<!--                        <input type="number" step="0.05" min="0" max="1" v-model.number="delta2" class="w-full bg-white border border-gray-300 rounded p-1.5 font-mono text-sm">-->
+<!--                        <span class="text-[11px] text-gray-400">Joriy m<sub>i</sub>(min): {{ Math.min(m1FinalScore/100, m2FinalScore/100, m3FinalScore/100).toFixed(4) }}</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     `
 };
