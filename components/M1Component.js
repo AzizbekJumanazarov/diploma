@@ -48,14 +48,80 @@ const M1Component = {
                 const n = m1Normalized.value;
                 const base = 78.45 + (n.x1 * 2) - (n.x8 * 1.5) + (n.x2 * 1);
                 return [
-                    { name: 'Linear Regression', val: base - 0.5 },
+                    { name: 'Stacking ensemble', val: base + 2.5 },
                     { name: 'ElasticNet', val: base - 0.3 },
                     { name: 'XGBoost', val: base + 0.8 },
                     { name: 'CatBoost', val: base + 1.2 },
-                    { name: 'SVR (Support Vector)', val: base - 0.9 },
-                    { name: 'Random Forest', val: base + 0.4 }
+                    { name: 'SVR', val: base - 0.9 },
+                    { name: 'Random Forest', val: base + 0.4 },
+                    { name: 'Chiziqli regressiya', val: base - 1.5 }
                 ];
             });
+
+            const selectedModelName = ref('Stacking ensemble');
+            const selectModel = (name) => {
+                selectedModelName.value = name;
+            };
+
+            const selectedModelData = computed(() => {
+                const model = baseModelList.value.find(m => m.name === selectedModelName.value) || baseModelList.value[0];
+                
+                const metricsMap = {
+                    'Stacking ensemble': { mae: '2.7810', rmse: '3.8113', r2: '0.8655' },
+                    'ElasticNet': { mae: '2.8498', rmse: '3.8686', r2: '0.8415' },
+                    'XGBoost': { mae: '3.1296', rmse: '4.2210', r2: '0.8351' },
+                    'CatBoost': { mae: '3.1613', rmse: '4.5009', r2: '0.8125' },
+                    'SVR': { mae: '3.7435', rmse: '4.9209', r2: '0.7758' },
+                    'Random Forest': { mae: '3.8405', rmse: '4.9817', r2: '0.7225' },
+                    'Chiziqli regressiya': { mae: '3.3356', rmse: '5.3717', r2: '0.6356' }
+                };
+                
+                const mData = metricsMap[model.name] || metricsMap['Stacking ensemble'];
+                
+                const seed = model.val;
+                const points = [];
+                const errorScale = parseFloat(mData.rmse); 
+                for(let i=0; i<20; i++) {
+                    const actual = 15 + Math.sin(i * 0.4 + seed) * 10 + Math.abs(Math.sin(seed * i)) * 4;
+                    const predicted = actual + (Math.sin(seed + i) - 0.5) * errorScale;
+                    points.push({ actual, predicted });
+                }
+                
+                return { name: model.name, val: model.val, mae: mData.mae, rmse: mData.rmse, r2: mData.r2, points };
+            });
+            
+            const chartPaths = computed(() => {
+                const data = selectedModelData.value.points;
+                const maxVal = Math.max(...data.map(d => Math.max(d.actual, d.predicted))) + 5;
+                const minVal = Math.min(...data.map(d => Math.min(d.actual, d.predicted))) - 5;
+                const range = maxVal - minVal;
+                
+                const width = 300;
+                const height = 120;
+                const stepX = width / (Math.max(data.length - 1, 1));
+                
+                let actualPath = 'M ';
+                let predictedPath = 'M ';
+                
+                const pointCoords = data.map((d, i) => {
+                    const x = i * stepX;
+                    const yActual = height - ((d.actual - minVal) / range) * height;
+                    const yPredicted = height - ((d.predicted - minVal) / range) * height;
+                    return { x, yActual, yPredicted };
+                });
+                
+                pointCoords.forEach((p, i) => {
+                    actualPath += `${p.x},${p.yActual} `;
+                    predictedPath += `${p.x},${p.yPredicted} `;
+                    if (i < pointCoords.length - 1) {
+                        actualPath += 'L ';
+                        predictedPath += 'L ';
+                    }
+                });
+                
+                return { actualPath, predictedPath, points: pointCoords };
+            });
+
             const m1FinalScore = computed(() => {
                 const m = baseModelList.value;
                 return (m[0].val * 0.1) + (m[1].val * 0.05) + (m[2].val * 0.3) + (m[3].val * 0.35) + (m[4].val * 0.05) + (m[5].val * 0.15);
@@ -63,7 +129,7 @@ const M1Component = {
 
             watch(m1FinalScore, score => emit('score-change', score), { immediate: true });
 
-            return { m1Config, m1Raw, loadM1Sample, m1Normalized, baseModelList };
+            return { m1Config, m1Raw, loadM1Sample, m1Normalized, baseModelList, selectedModelName, selectModel, selectedModelData, chartPaths };
         },
         template: `
             <div class="lg:col-span-2 space-y-6">
@@ -105,12 +171,73 @@ const M1Component = {
                             </div>
                         </div>
 
-                        <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="font-semibold text-gray-700">3-Qadam: 6 ta bazaviy model orqali prognozlash (h<sub>1</sub>(D), ..., h<sub>6</sub>(D))</p>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
-                                <div v-for="m in baseModelList" :key="m.name" class="bg-white p-2 rounded border text-center">
-                                    <span class="text-[11px] text-gray-500 block leading-tight h-8 flex items-center justify-center">{{ m.name }}</span>
-                                    <span class="font-mono font-bold text-purple-700 text-base">{{ m.val.toFixed(2) }}%</span>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <p class="font-semibold text-gray-700 mb-3">3-Qadam: 6 ta bazaviy model orqali prognozlash (h<sub>1</sub>(D), ..., h<sub>6</sub>(D))</p>
+                            
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <!-- Modellar ro'yxati -->
+                                <div class="w-full md:w-1/3 flex flex-col gap-2">
+                                    <div class="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">Modelni Tanlash</div>
+                                    <button 
+                                        v-for="m in baseModelList" 
+                                        :key="m.name"
+                                        @click="selectModel(m.name)"
+                                        :class="['px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-left flex justify-between items-center', 
+                                            selectedModelName === m.name ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200']"
+                                    >
+                                        <span>{{ m.name }}</span>
+                                        <svg v-if="selectedModelName === m.name" class="w-4 h-4 text-indigo-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    </button>
+                                </div>
+                                
+                                <!-- Natijalar va Grafik -->
+                                <div class="w-full md:w-2/3 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                                    <h3 class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center justify-between">
+                                        <span>Natijalar: <span class="text-indigo-600">{{ selectedModelData.name }}</span></span>
+                                        <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded">{{ selectedModelData.val.toFixed(2) }}%</span>
+                                    </h3>
+                                    
+                                    <div class="grid grid-cols-3 gap-3 mb-5">
+                                        <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-center shadow-sm">
+                                            <div class="text-[11px] text-gray-500 mb-0.5 font-medium uppercase">MAE</div>
+                                            <div class="font-bold text-blue-600 font-mono text-lg">{{ selectedModelData.mae }}</div>
+                                        </div>
+                                        <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-center shadow-sm">
+                                            <div class="text-[11px] text-gray-500 mb-0.5 font-medium uppercase">RMSE</div>
+                                            <div class="font-bold text-blue-600 font-mono text-lg">{{ selectedModelData.rmse }}</div>
+                                        </div>
+                                        <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-center shadow-sm">
+                                            <div class="text-[11px] text-gray-500 mb-0.5 font-medium uppercase">R²</div>
+                                            <div class="font-bold text-blue-600 font-mono text-lg">{{ selectedModelData.r2 }}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between items-end mb-2">
+                                            <div class="text-xs font-semibold text-gray-700">Haqiqiy va Bashorat Qilingan Qiymatlar</div>
+                                            <div class="flex gap-3 text-[10px] font-medium text-gray-500">
+                                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 block"></span> Haqiqiy</div>
+                                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 block opacity-80"></span> Bashorat</div>
+                                            </div>
+                                        </div>
+                                        <div class="w-full h-[140px] relative bg-slate-50 border-l border-b border-slate-300 rounded-tr-sm rounded-bl-sm pt-2 pr-2 overflow-hidden">
+                                            <svg width="100%" height="100%" viewBox="-5 -5 310 130" preserveAspectRatio="none">
+                                                <!-- Grid lines -->
+                                                <line x1="0" y1="30" x2="300" y2="30" stroke="#cbd5e1" stroke-width="0.5" stroke-dasharray="4" />
+                                                <line x1="0" y1="60" x2="300" y2="60" stroke="#cbd5e1" stroke-width="0.5" stroke-dasharray="4" />
+                                                <line x1="0" y1="90" x2="300" y2="90" stroke="#cbd5e1" stroke-width="0.5" stroke-dasharray="4" />
+                                                
+                                                <!-- Lines -->
+                                                <path :d="chartPaths.actualPath" fill="none" stroke="#3b82f6" stroke-width="2.5" />
+                                                <path :d="chartPaths.predictedPath" fill="none" stroke="#f97316" stroke-width="2.5" stroke-dasharray="6 3" />
+                                                
+                                                <!-- Points for actual -->
+                                                <circle v-for="(p, i) in chartPaths.points" :key="'a'+i" :cx="p.x" :cy="p.yActual" r="3" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5" />
+                                                <!-- Points for predicted -->
+                                                <circle v-for="(p, i) in chartPaths.points" :key="'p'+i" :cx="p.x" :cy="p.yPredicted" r="3" fill="#ffffff" stroke="#f97316" stroke-width="1.5" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
