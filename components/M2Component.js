@@ -157,41 +157,41 @@ const M2Component = {
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 space-y-4">
-                    <h3 class="text-base font-bold text-gray-700 border-b pb-2 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                        M2 Modeli Ichki Algoritmik Hisob-Kitobi <span class="font-mono font-bold text-teal-700">(A<sup>1</sup>, A<sup>2</sup>, A<sup>3</sup>)</span>
-                    </h3>
+<!--                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 space-y-4">-->
+<!--                    <h3 class="text-base font-bold text-gray-700 border-b pb-2 flex items-center gap-2">-->
+<!--                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>-->
+<!--                        M2 Modeli Ichki Algoritmik Hisob-Kitobi <span class="font-mono font-bold text-teal-700">(A<sup>1</sup>, A<sup>2</sup>, A<sup>3</sup>)</span>-->
+<!--                    </h3>-->
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="p-3 bg-emerald-50 rounded border border-emerald-200 text-center">
-                            <span class="text-xs font-bold text-emerald-800 block">Tibbiy-profilaktik (A¹)</span>
-                            <span class="text-xl font-mono font-bold text-emerald-700">{{ m2SubScores.a1.toFixed(3) }}</span>
-                            <span class="text-[10px] text-emerald-600 block mt-0.5">Global vazni: 35%</span>
-                        </div>
-                        <div class="p-3 bg-blue-50 rounded border border-blue-200 text-center">
-                            <span class="text-xs font-bold text-blue-800 block">Jismoniy-sport (A²)</span>
-                            <span class="text-xl font-mono font-bold text-blue-700">{{ m2SubScores.a2.toFixed(3) }}</span>
-                            <span class="text-[10px] text-blue-600 block mt-0.5">Global vazni: 35%</span>
-                        </div>
-                        <div class="p-3 bg-purple-50 rounded border border-purple-200 text-center">
-                            <span class="text-xs font-bold text-purple-800 block">Ijtimoiy-ekologik (A³)</span>
-                            <span class="text-xl font-mono font-bold text-purple-700">{{ m2SubScores.a3.toFixed(3) }}</span>
-                            <span class="text-[10px] text-purple-600 block mt-0.5">Global vazni: 30%</span>
-                        </div>
-                    </div>
+<!--                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">-->
+<!--                        <div class="p-3 bg-emerald-50 rounded border border-emerald-200 text-center">-->
+<!--                            <span class="text-xs font-bold text-emerald-800 block">Tibbiy-profilaktik (A¹)</span>-->
+<!--                            <span class="text-xl font-mono font-bold text-emerald-700">{{ m2SubScores.a1.toFixed(3) }}</span>-->
+<!--                            <span class="text-[10px] text-emerald-600 block mt-0.5">Global vazni: 35%</span>-->
+<!--                        </div>-->
+<!--                        <div class="p-3 bg-blue-50 rounded border border-blue-200 text-center">-->
+<!--                            <span class="text-xs font-bold text-blue-800 block">Jismoniy-sport (A²)</span>-->
+<!--                            <span class="text-xl font-mono font-bold text-blue-700">{{ m2SubScores.a2.toFixed(3) }}</span>-->
+<!--                            <span class="text-[10px] text-blue-600 block mt-0.5">Global vazni: 35%</span>-->
+<!--                        </div>-->
+<!--                        <div class="p-3 bg-purple-50 rounded border border-purple-200 text-center">-->
+<!--                            <span class="text-xs font-bold text-purple-800 block">Ijtimoiy-ekologik (A³)</span>-->
+<!--                            <span class="text-xl font-mono font-bold text-purple-700">{{ m2SubScores.a3.toFixed(3) }}</span>-->
+<!--                            <span class="text-[10px] text-purple-600 block mt-0.5">Global vazni: 30%</span>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
-                    <div class="mt-6 pt-4 border-t border-gray-200">
-                        <h4 class="text-sm font-bold text-slate-700 mb-3 uppercase tracking-wide flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                            Parametrik koridor va og‘irlik koeffitsiyentlari usullari tahlili (Ekspert vs Reyting)
-                        </h4>
-                        <p class="text-xs text-gray-600 mb-4 leading-relaxed">
-                            Tizim integratsiyalashgan ilmiy algoritmlarga tayanadi. Vazn koeffitsiyentsiz o'zgarishlar <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-600 font-mono font-bold">[-7.029, 0.42]</code> (ko‘k rangli grafik bazasi) koridorida tebranadi.
-                            Reytinglash usulida minimal <code class="bg-gray-100 px-1 py-0.5 rounded text-rose-600 font-mono font-bold">-0.4960</code> va maksimal <code class="bg-gray-100 px-1 py-0.5 rounded text-rose-600 font-mono font-bold">0.069</code> (qizil koordinata), ballar berish usulida esa <code class="bg-gray-100 px-1 py-0.5 rounded text-emerald-600 font-mono font-bold">[-0.415, 0.053]</code> (yashil grafik traektoriyasi) dinamikasini aks ettiradi.
-                        </p>
-                    </div>
-                </div>
+<!--                    <div class="mt-6 pt-4 border-t border-gray-200">-->
+<!--                        <h4 class="text-sm font-bold text-slate-700 mb-3 uppercase tracking-wide flex items-center gap-1.5">-->
+<!--                            <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>-->
+<!--                            Parametrik koridor va og‘irlik koeffitsiyentlari usullari tahlili (Ekspert vs Reyting)-->
+<!--                        </h4>-->
+<!--                        <p class="text-xs text-gray-600 mb-4 leading-relaxed">-->
+<!--                            Tizim integratsiyalashgan ilmiy algoritmlarga tayanadi. Vazn koeffitsiyentsiz o'zgarishlar <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-600 font-mono font-bold">[-7.029, 0.42]</code> (ko‘k rangli grafik bazasi) koridorida tebranadi.-->
+<!--                            Reytinglash usulida minimal <code class="bg-gray-100 px-1 py-0.5 rounded text-rose-600 font-mono font-bold">-0.4960</code> va maksimal <code class="bg-gray-100 px-1 py-0.5 rounded text-rose-600 font-mono font-bold">0.069</code> (qizil koordinata), ballar berish usulida esa <code class="bg-gray-100 px-1 py-0.5 rounded text-emerald-600 font-mono font-bold">[-0.415, 0.053]</code> (yashil grafik traektoriyasi) dinamikasini aks ettiradi.-->
+<!--                        </p>-->
+<!--                    </div>-->
+<!--                </div>-->
             </div>
         `
     };

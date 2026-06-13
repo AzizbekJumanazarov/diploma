@@ -137,7 +137,7 @@ const M1Component = {
                     <div class="flex justify-between items-center mb-4 border-b pb-2">
                         <h2 class="text-lg font-bold text-gray-700 flex items-center gap-2">
                             <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full">Kiritish</span>
-                            1-Qadam: Demografik real ko'rsatkichlar
+                            Demografik real ko'rsatkichlar
                         </h2>
 <!--                        <button @click="loadM1Sample" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded transition font-medium">-->
 <!--                            1-ID mahalla ma'lumotlarini yuklash-->
@@ -157,22 +157,22 @@ const M1Component = {
                 <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                     <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2 flex items-center gap-2">
                         <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Algoritm</span>
-                        Yangi Stacking Ansambl Modeli Qadamlari
+                        Yangi Stacking Ansambl Modeli
                     </h2>
 
                     <div class="space-y-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="font-semibold text-gray-700">2-Qadam: Ma'lumotlarni saralash va normallashtirish <span>d<sub>ij</sub> &rarr; [0, 1]</span></p>
-                            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 text-center text-xs mt-2">
-                                <div v-for="(val, key) in m1Normalized" :key="key" class="bg-white p-1.5 rounded border">
-                                    <span class="block font-bold text-gray-400">{{ key }}</span>
-                                    <span class="text-blue-600 font-mono font-bold">{{ val.toFixed(3) }}</span>
-                                </div>
-                            </div>
-                        </div>
+<!--                        <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">-->
+<!--                            <p class="font-semibold text-gray-700">2-Qadam: Ma'lumotlarni saralash va normallashtirish <span>d<sub>ij</sub> &rarr; [0, 1]</span></p>-->
+<!--                            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 text-center text-xs mt-2">-->
+<!--                                <div v-for="(val, key) in m1Normalized" :key="key" class="bg-white p-1.5 rounded border">-->
+<!--                                    <span class="block font-bold text-gray-400">{{ key }}</span>-->
+<!--                                    <span class="text-blue-600 font-mono font-bold">{{ val.toFixed(3) }}</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
 
                         <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="font-semibold text-gray-700 mb-3">3-Qadam: 6 ta bazaviy model orqali prognozlash (h<sub>1</sub>(D), ..., h<sub>6</sub>(D))</p>
+                            <p class="font-semibold text-gray-700 mb-3">6 ta bazaviy model orqali prognozlash (h<sub>1</sub>(D), ..., h<sub>6</sub>(D))</p>
                             
                             <div class="flex flex-col md:flex-row gap-4">
                                 <!-- Modellar ro'yxati -->
@@ -242,15 +242,15 @@ const M1Component = {
                             </div>
                         </div>
 
-                        <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="font-semibold text-gray-700">4-5-6 Qadamlar: Stacking Vektor <span class="font-mono font-bold text-gray-700">(Z<sub>i</sub>)</span> va Meta-Model Optimallashuvi</p>
-                            <div class="mt-2 p-2 bg-slate-900 text-slate-100 rounded font-mono text-xs overflow-x-auto">
-                                Z<sub>i</sub> = [
-                                <span v-for="(m, idx) in baseModelList" :key="idx">
-                                    {{ m.val.toFixed(1) }}{{ idx < baseModelList.length - 1 ? ', ' : '' }}
-                                </span> ]<sup>T</sup>
-                            </div>
-                        </div>
+<!--                        <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">-->
+<!--                            <p class="font-semibold text-gray-700">4-5-6 Qadamlar: Stacking Vektor <span class="font-mono font-bold text-gray-700">(Z<sub>i</sub>)</span> va Meta-Model Optimallashuvi</p>-->
+<!--                            <div class="mt-2 p-2 bg-slate-900 text-slate-100 rounded font-mono text-xs overflow-x-auto">-->
+<!--                                Z<sub>i</sub> = [-->
+<!--                                <span v-for="(m, idx) in baseModelList" :key="idx">-->
+<!--                                    {{ m.val.toFixed(1) }}{{ idx < baseModelList.length - 1 ? ', ' : '' }}-->
+<!--                                </span> ]<sup>T</sup>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
